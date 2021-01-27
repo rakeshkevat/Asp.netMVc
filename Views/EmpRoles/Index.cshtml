@@ -1,0 +1,49 @@
+﻿@model IEnumerable<MyApp.Model.EmpRoleViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+    
+        <th>
+            @Html.DisplayNameFor(model => model.RoleName)
+        </th>
+       
+        <th>
+            @Html.DisplayNameFor(model => model.EmployeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+   
+    <td>
+        @Html.DisplayFor(modelItem => item.RoleName)
+    </td>
+    
+    <td>
+        @Html.DisplayFor(modelItem => item.EmployeeName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.IsActive)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.EmpRolesID })
+        @Html.ActionLink("Details", "Details", new { id = item.EmpRolesID })
+        @Html.ActionLink("Delete", "Delete", new { id = item.EmpRolesID })
+    </td>
+</tr>
+}
+
+</table>
