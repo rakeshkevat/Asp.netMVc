@@ -45,14 +45,18 @@ namespace Management.Controllers
         [HttpPost]
         public ActionResult Create(EmpRoleViewModel empRoleViewModel)
         {
-            EmpRole empRole = new EmpRole();
-            empRole.RoleID = empRoleViewModel.RoleID;
-            empRole.EmpID = empRoleViewModel.EmpID;
-            empRole.IsActive = empRoleViewModel.IsActive;
-            empRole.CreatedDate = DateTime.Now;
-            db.EmpRoles.Add(empRole);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                EmpRole empRole = new EmpRole();
+                empRole.RoleID = empRoleViewModel.RoleID;
+                empRole.EmpID = empRoleViewModel.EmpID;
+                empRole.IsActive = empRoleViewModel.IsActive;
+                empRole.CreatedDate = DateTime.Now;
+                db.EmpRoles.Add(empRole);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(empRoleViewModel);
         }
         public ActionResult Details(int? id)
         {             
@@ -90,14 +94,20 @@ namespace Management.Controllers
         [HttpPost]
         public ActionResult Edit(EmpRoleViewModel empRoleViewModel)
         {
-            EmpRole empRole = db.EmpRoles.Find(empRoleViewModel.EmpRolesID);
-            empRole.RoleID = empRoleViewModel.RoleID;
-            empRole.EmpID = empRoleViewModel.EmpID;
-            empRole.IsActive = empRoleViewModel.IsActive;
-            empRole.CreatedDate = DateTime.Now;
-            db.Entry(empRole).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                EmpRole empRole = db.EmpRoles.Find(empRoleViewModel.EmpRolesID);
+                empRole.RoleID = empRoleViewModel.RoleID;
+                empRole.EmpID = empRoleViewModel.EmpID;
+                empRole.IsActive = empRoleViewModel.IsActive;
+                empRole.CreatedDate = DateTime.Now;
+                db.Entry(empRole).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(empRoleViewModel); 
+
         }
 
         public ActionResult Delete(int? id)

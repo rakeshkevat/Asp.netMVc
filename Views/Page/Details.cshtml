@@ -1,0 +1,50 @@
+﻿@model MyApp.Model.PageViewModel
+
+@{
+    ViewBag.Title = "Page Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PageID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageUrl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageUrl)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>         
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PageID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

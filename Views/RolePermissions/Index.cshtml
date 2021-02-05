@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyApp.Db.RolePermission>
+﻿@model IEnumerable<MyApp.Model.RolePermissionViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -10,9 +10,9 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
-    <tr>
+    <tr> 
         <th>
-            @Html.DisplayNameFor(model => model.RoleID)
+            @Html.DisplayNameFor(model => model.RoleName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.PageName)
@@ -21,19 +21,19 @@
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.RoleID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PageName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.RolePermissingID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.RolePermissingID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.RolePermissingID })
-        </td>
-    </tr>
+<tr> 
+    <td>
+        @Html.DisplayFor(modelItem => item.RoleName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.PageName)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.RolePermissingID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.RolePermissingID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.RolePermissingID })
+    </td>
+</tr>
 }
 
 </table>
