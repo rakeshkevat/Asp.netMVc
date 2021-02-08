@@ -14,9 +14,61 @@ namespace Management.Controllers
         // GET: Employees
 
         private EmpManagementEntities db = new EmpManagementEntities();
+
+
+        public ActionResult Login()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginViewModel loginViewModel)
+        {
+            var employee = db.Employees.Where(x => x.EmpName.Equals(loginViewModel.EmpName) && x.Password.Equals(loginViewModel.Password)).SingleOrDefault();
+
+            if (employee != null)
+            {
+                var empRole = db.EmpRoles.FirstOrDefault(x => x.EmpID == employee.EmpID);
+                Session["RoleId"] = empRole.RoleID;
+
+                return RedirectToAction("Index","Home");
+
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+
+        }
+
+        public ActionResult Logout(LoginViewModel loginViewModel)
+        {
+            Session["RoleId"] = null;
+
+            return RedirectToAction("Login");           
+        }
+
+
+
         public ActionResult Index()
         {
-            return View(db.Employees.Take(3).ToList());
+            List<Employee> employees = db.Employees.ToList();
+            List<EmployeeViewModel> employeeViewModels = new List<EmployeeViewModel>();
+            foreach (var item in employees)
+            {
+                employeeViewModels.Add(new EmployeeViewModel()
+                {
+                    EmpID = item.EmpID,
+                    EmpName = item.EmpName,
+                    EmpEmail = item.EmpEmail,
+                    EmpContact = item.EmpContact,
+                    IsActive = item.IsActive
+                });
+            }
+            return View(employeeViewModels);
+            //return View(db.Employees.Take(3).ToList());
         }
         public ActionResult Create()
         {
@@ -25,31 +77,33 @@ namespace Management.Controllers
         [HttpPost]
         public ActionResult Create(EmployeeViewModel employeeViewModel)
         {
-            Employee employee = new Employee();
-            employee.EmpID = employeeViewModel.EmpID;
-            employee.EmpName = employeeViewModel.EmpName;
-            employee.EmpContact = employeeViewModel.EmpContact;
-            employee.EmpEmail = employeeViewModel.EmpEmail;
-            employee.IsActive = employeeViewModel.IsActive;
-            employee.CreatedDate = employeeViewModel.CreatedDate;
-            db.Employees.Add(employee);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                Employee employee = new Employee();
+                employee.EmpID = employeeViewModel.EmpID;
+                employee.EmpName = employeeViewModel.EmpName;
+                employee.EmpContact = employeeViewModel.EmpContact;
+                employee.EmpEmail = employeeViewModel.EmpEmail;
+                employee.IsActive = employeeViewModel.IsActive;
+                employee.CreatedDate = DateTime.Now;
+                employee.Password = employeeViewModel.Password;
+                db.Employees.Add(employee);
+                db.SaveChanges();
+                db.EmpRoles.Add(new EmpRole
+                {
+                    EmpID = employee.EmpID,
+                    RoleID = 3,
+                    IsActive = true,
+                    CreatedDate = DateTime.Now
+                });
+                db.SaveChanges();
+                return RedirectToAction("Index");
+
+            }
+            return View(employeeViewModel);
         }
         public ActionResult Details(int id)
-        {
-            Employee employee = db.Employees.Find(id);
-            EmployeeViewModel employeeViewModel = new EmployeeViewModel();
-            employee.EmpID = employeeViewModel.EmpID;
-            employee.EmpName = employeeViewModel.EmpName;
-            employee.EmpContact = employeeViewModel.EmpContact;
-            employee.EmpEmail = employeeViewModel.EmpEmail;
-            employee.IsActive = employeeViewModel.IsActive;
-            employee.CreatedDate = employeeViewModel.CreatedDate;         
-             return View(employeeViewModel);
-        }
-
-        public ActionResult Edit(int id)
         {
             Employee employee = db.Employees.Find(id);
             EmployeeViewModel employeeViewModel = new EmployeeViewModel();
@@ -58,22 +112,41 @@ namespace Management.Controllers
             employeeViewModel.EmpContact = employee.EmpContact;
             employeeViewModel.EmpEmail = employee.EmpEmail;
             employeeViewModel.IsActive = employee.IsActive;
+            return View(employeeViewModel);
+        }
+
+        public ActionResult Edit(int id)
+        {
+
+            Employee employee = db.Employees.Find(id);
+            EmployeeViewModel employeeViewModel = new EmployeeViewModel();
+            employeeViewModel.EmpID = employee.EmpID;
+            employeeViewModel.EmpName = employee.EmpName;
+            employeeViewModel.EmpContact = employee.EmpContact;
+            employeeViewModel.EmpEmail = employee.EmpEmail;
+            employeeViewModel.IsActive = employee.IsActive;
             employeeViewModel.CreatedDate = employee.CreatedDate;
+            employeeViewModel.Password = employee.Password;
             return View(employeeViewModel);
 
         }
         [HttpPost]
         public ActionResult Edit(EmployeeViewModel employeeViewModel)
         {
-            Employee employee = db.Employees.Find(employeeViewModel.EmpID);            
-            employee.EmpName = employeeViewModel.EmpName;
-            employee.EmpContact = employeeViewModel.EmpContact;
-            employee.EmpEmail = employeeViewModel.EmpEmail;
-            employee.IsActive = employeeViewModel.IsActive;
-            employee.UpdateDate = DateTime.Now;
-            db.Entry(employee).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                Employee employee = db.Employees.Find(employeeViewModel.EmpID);
+                employee.EmpName = employeeViewModel.EmpName;
+                employee.EmpContact = employeeViewModel.EmpContact;
+                employee.EmpEmail = employeeViewModel.EmpEmail;
+                employee.IsActive = employeeViewModel.IsActive;
+                employee.Password = employeeViewModel.Password;
+                employee.UpdateDate = DateTime.Now;
+                db.Entry(employee).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(employeeViewModel);
 
         }
 
@@ -85,4 +158,4 @@ namespace Management.Controllers
             return RedirectToAction("Index");
         }
     }
-}   
+}

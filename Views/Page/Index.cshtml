@@ -1,0 +1,51 @@
+﻿@model IEnumerable<MyApp.Model.PageViewModel>
+
+@{
+    ViewBag.Title = "Page List";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PageID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PageName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PageUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+          
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PageID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PageName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PageUrl)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsActive)
+        </td>        
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.PageID  }) |
+            @Html.ActionLink("Details", "Details", new { id = item.PageID }) |
+            @Html.ActionLink("Delete", "Delete", new { id =item.PageID })
+        </td>
+    </tr>
+}
+
+</table>

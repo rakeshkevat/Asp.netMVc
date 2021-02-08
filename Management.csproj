@@ -129,6 +129,7 @@
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\EmpRolesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PageController.cs" />
     <Compile Include="Controllers\RolePermissionsController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -178,7 +179,6 @@
     <Content Include="Views\Roles\Edit.cshtml" />
     <Content Include="Views\Employees\Create.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
-    <Content Include="Views\Employees\Details.cshtml" />
     <Content Include="Views\Employees\Edit.cshtml" />
     <Content Include="Views\Employees\Delete.cshtml" />
     <Content Include="Views\EmpRoles\Create.cshtml" />
@@ -191,6 +191,13 @@
     <Content Include="Views\RolePermissions\Details.cshtml" />
     <Content Include="Views\RolePermissions\Edit.cshtml" />
     <Content Include="Views\RolePermissions\Delete.cshtml" />
+    <Content Include="Views\Page\Create.cshtml" />
+    <Content Include="Views\Page\Index.cshtml" />
+    <Content Include="Views\Page\Edit.cshtml" />
+    <Content Include="Views\Page\Details.cshtml" />
+    <Content Include="Views\Employees\Details.cshtml" />
+    <Content Include="Views\Login\Elogin.cshtml" />
+    <Content Include="Views\Employees\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

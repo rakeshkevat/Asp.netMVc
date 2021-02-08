@@ -15,7 +15,22 @@ namespace Management.Controllers
         // GET: Roles
         public ActionResult Index()
         {
-            return View(db.Roles.ToList());
+            List<Role> role = db.Roles.ToList();
+            List<RoleViewModel> roleViewModels = new List<RoleViewModel>();
+            foreach (var item in role)
+            {
+                roleViewModels.Add( new RoleViewModel()
+                                    {
+                                        RoleID = item.RoleID,
+                                        RoleName = item.RoleName,
+                                        RoleDescruption = item.RoleDescruption,
+                                        IsActive = item.IsActive,
+                                    }
+                );
+            }
+
+            return View(roleViewModels);
+            //return View(db.Roles.ToList());
         }
         public ActionResult Create()
         {
@@ -61,10 +76,6 @@ namespace Management.Controllers
             db.Roles.Remove(role);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        
-
-        
+        } 
     }
 }
