@@ -1,4 +1,5 @@
-﻿using MyApp.Db;
+﻿using Management.Customfilter;
+using MyApp.Db;
 using MyApp.Model;
 using System;
 using System.Collections.Generic;
@@ -15,43 +16,7 @@ namespace Management.Controllers
 
         private EmpManagementEntities db = new EmpManagementEntities();
 
-
-        public ActionResult Login()
-        {
-
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Login(LoginViewModel loginViewModel)
-        {
-            var employee = db.Employees.Where(x => x.EmpName.Equals(loginViewModel.EmpName) && x.Password.Equals(loginViewModel.Password)).SingleOrDefault();
-
-            if (employee != null)
-            {
-                var empRole = db.EmpRoles.FirstOrDefault(x => x.EmpID == employee.EmpID);
-                Session["RoleId"] = empRole.RoleID;
-
-                return RedirectToAction("Index","Home");
-
-            }
-            else
-            {
-                return RedirectToAction("Login");
-            }
-
-
-        }
-
-        public ActionResult Logout(LoginViewModel loginViewModel)
-        {
-            Session["RoleId"] = null;
-
-            return RedirectToAction("Login");           
-        }
-
-
-
+        [CustomAuthenticationFilter("Admin")]
         public ActionResult Index()
         {
             List<Employee> employees = db.Employees.ToList();
