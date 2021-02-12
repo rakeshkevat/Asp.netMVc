@@ -11,25 +11,35 @@ namespace Management.Controllers
 {
     public class EmpRolesController : Controller
     {
-
         private EmpManagementEntities db = new EmpManagementEntities();
         // GET: EmpRoles
-        
-        public ActionResult Index()
-        {          
 
-            var innerjoint = from empRole in db.EmpRoles
-                             join emp in db.Employees on empRole.EmpID equals emp.EmpID
-                             join role in db.Roles on empRole.RoleID equals role.RoleID
-                             select new EmpRoleViewModel
-                             {
-                                 EmpRolesID = empRole.EmpRolesID,
-                                 EmpID = empRole.EmpID,
-                                 RoleID = empRole.RoleID,
-                                 EmployeeName = emp.EmpName,
-                                 RoleName = role.RoleName,
-                                 IsActive  = empRole.IsActive
-                             };
+        public ActionResult Index()
+        {
+            //var innerjoint = from empRole in db.EmpRoles
+            //                 join emp in db.Employees on empRole.EmpID equals emp.EmpID
+            //                 join role in db.Roles on empRole.RoleID equals role.RoleID
+            //                 select new EmpRoleViewModel
+            //                 {
+            //                     EmpRolesID = empRole.EmpRolesID,
+            //                     EmpID = empRole.EmpID,
+            //                     RoleID = empRole.RoleID,
+            //                     EmployeeName = emp.EmpName,
+            //                     RoleName = role.RoleName,
+            //                     IsActive  = empRole.IsActive
+            //                 };
+            var innerjoint = (from empRole in db.EmpRoles
+                              join emp in db.Employees on empRole.EmpID equals emp.EmpID
+                              join role in db.Roles on empRole.RoleID equals role.RoleID
+                              select new EmpRoleViewModel
+                              {
+                                  EmpRolesID = empRole.EmpRolesID,
+                                  EmpID = empRole.EmpID,
+                                  RoleID = empRole.RoleID,
+                                  EmployeeName = emp.EmpName,
+                                  RoleName = role.RoleName,
+                                  IsActive = empRole.IsActive
+                              }).Where(x => x.IsActive == true).ToList();
             return View(innerjoint);
         }
 
@@ -59,19 +69,19 @@ namespace Management.Controllers
             return View(empRoleViewModel);
         }
         public ActionResult Details(int? id)
-        {             
+        {
             var innerjoint = (from empRole in db.EmpRoles
-                             join emp in db.Employees on empRole.EmpID equals emp.EmpID
-                             join role in db.Roles on empRole.RoleID equals role.RoleID
-                             select new EmpRoleViewModel
-                             {
-                                 EmpRolesID = empRole.EmpRolesID,
-                                 EmpID = empRole.EmpID,
-                                 RoleID = empRole.RoleID,
-                                 EmployeeName = emp.EmpName,
-                                 RoleName = role.RoleName,
-                                 IsActive = empRole.IsActive
-                             }).FirstOrDefault();
+                              join emp in db.Employees on empRole.EmpID equals emp.EmpID
+                              join role in db.Roles on empRole.RoleID equals role.RoleID
+                              select new EmpRoleViewModel
+                              {
+                                  EmpRolesID = empRole.EmpRolesID,
+                                  EmpID = empRole.EmpID,
+                                  RoleID = empRole.RoleID,
+                                  EmployeeName = emp.EmpName,
+                                  RoleName = role.RoleName,
+                                  IsActive = empRole.IsActive
+                              }).FirstOrDefault();
             return View(innerjoint);
         }
         public ActionResult Edit(int? id)
@@ -83,9 +93,8 @@ namespace Management.Controllers
             empRoleViewModel.EmpID = empRole.EmpID;
             empRoleViewModel.IsActive = empRole.IsActive;
 
-
-            List<Role> rolelist1 = db.Roles.ToList(); 
-            ViewBag.Rolelist = new SelectList(rolelist1, "RoleID", "RoleName",empRole.RoleID);
+            List<Role> rolelist1 = db.Roles.ToList();
+            ViewBag.Rolelist = new SelectList(rolelist1, "RoleID", "RoleName", empRole.RoleID);
 
             List<Employee> employeelist1 = db.Employees.ToList();
             ViewBag.Employeelist = new SelectList(employeelist1, "EmpID", "EmpName", empRole.EmpID);
@@ -94,7 +103,6 @@ namespace Management.Controllers
         [HttpPost]
         public ActionResult Edit(EmpRoleViewModel empRoleViewModel)
         {
-
             if (ModelState.IsValid)
             {
                 EmpRole empRole = db.EmpRoles.Find(empRoleViewModel.EmpRolesID);
@@ -106,14 +114,14 @@ namespace Management.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(empRoleViewModel); 
-
+            return View(empRoleViewModel);
         }
 
         public ActionResult Delete(int? id)
         {
             EmpRole empRole = db.EmpRoles.Find(id);
-            db.EmpRoles.Remove(empRole);
+            empRole.IsActive = false;   // only deactive the account not for delete
+            //db.EmpRoles.Remove(empRole);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

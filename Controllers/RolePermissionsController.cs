@@ -1,4 +1,5 @@
-﻿using MyApp.Db;
+﻿using Management.Customfilter;
+using MyApp.Db;
 using MyApp.Model;
 using System;
 using System.Collections.Generic;
@@ -13,24 +14,29 @@ namespace Management.Controllers
     {
         private EmpManagementEntities db = new EmpManagementEntities();
         // GET: RolePermissions
+        [CustomAuthenticationFilter("Admin", "staff")]
+
         public ActionResult Index()
-        { 
+        {
             var innerjoint = from rp in db.RolePermissions
                              join r in db.Roles on rp.RoleID equals r.RoleID
                              join p in db.Pages on rp.PageID equals p.PageID
                              select new RolePermissionViewModel()
-                             {   RolePermissingID = rp.RolePermissingID,
+                             {
+                                 RolePermissingID = rp.RolePermissingID,
                                  RoleID = rp.RoleID,
                                  PageID = rp.PageID,
-                                 RoleName =  r.RoleName,
+                                 RoleName = r.RoleName,
                                  PageName = p.PageName
                              };
             return View(innerjoint);
         }
-        public ActionResult Create()   
+        [CustomAuthenticationFilter("Admin")]
+
+        public ActionResult Create()
         {
-            var ListofRoles = db.Roles.ToList();
-            ViewBag.Roles = new SelectList( ListofRoles, "RoleID", "RoleName");
+            var ListofRoles = db.Roles.Where(x=>x.IsActive == true).ToList();
+            ViewBag.Roles = new SelectList(ListofRoles, "RoleID", "RoleName");
             var ListofPages = db.Pages.ToList();
             ViewBag.ListofPages = new SelectList(ListofPages, "PageID", "PageName");
             return View();
@@ -46,22 +52,25 @@ namespace Management.Controllers
             db.SaveChanges();
             return RedirectToAction("index");
         }
+        [CustomAuthenticationFilter("Admin","staff")]
+
         public ActionResult Details(int id)
         {
             var selectFirstRowData = (from rp in db.RolePermissions
-                                  join r in db.Roles on rp.RoleID equals r.RoleID
-                                  join p in db.Pages on rp.PageID equals p.PageID
-                                  select new RolePermissionViewModel()
-                                  {
-                                      RolePermissingID = rp.RolePermissingID,
-                                      RoleID = rp.RoleID,
-                                      PageID = rp.PageID,
-                                      RoleName = r.RoleName,
-                                      PageName = p.PageName
-                                  }).FirstOrDefault();
+                                      join r in db.Roles on rp.RoleID equals r.RoleID
+                                      join p in db.Pages on rp.PageID equals p.PageID
+                                      select new RolePermissionViewModel()
+                                      {
+                                          RolePermissingID = rp.RolePermissingID,
+                                          RoleID = rp.RoleID,
+                                          PageID = rp.PageID,
+                                          RoleName = r.RoleName,
+                                          PageName = p.PageName
+                                      }).FirstOrDefault();
             return View(selectFirstRowData);
 
         }
+        [CustomAuthenticationFilter("Admin", "staff")]
         public ActionResult Edit(int id)
         {
             RolePermission rolePermission = db.RolePermissions.Find(id);
@@ -87,6 +96,7 @@ namespace Management.Controllers
             db.SaveChanges();
             return RedirectToAction("index");
         }
+        [CustomAuthenticationFilter("Admin")]
 
         public ActionResult Delete(int? id)
         {

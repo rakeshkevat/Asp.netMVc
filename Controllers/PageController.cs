@@ -15,7 +15,7 @@ namespace Management.Controllers
         public ActionResult Index()
         {
 
-            List<Page> page = db.Pages.ToList();
+            List<Page> page = db.Pages.Where(x=>x.IsActive == true).ToList();
             List<PageViewModel> pageViewModels = new List<PageViewModel>();
             foreach (var item in page)
             {

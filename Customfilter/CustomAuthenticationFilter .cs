@@ -23,21 +23,18 @@ namespace Management.Customfilter
             if (userId > 0)
                 using (var db = new EmpManagementEntities())
                 {
-                    var empRole = (from eRole in db.EmpRoles
-                                  join r in db.Roles on eRole.RoleID equals r.RoleID
+                    var roleName = (from eRole in db.EmpRoles
+                                  join r in db.Roles on eRole.RoleID equals r.RoleID    
                                   where eRole.EmpID == userId
                                   select new {                                  
                                   r.RoleName
-                                  }).FirstOrDefault();
-
-                    
+                                  }).FirstOrDefault();                    
 
                     foreach (var role in allowedroles)
                     {
-                        if (role == empRole.RoleName) return true;
+                        if (role.ToLower() == roleName.RoleName.ToLower()) return true;
                     }
                 }
-
 
             return authorize;
         }

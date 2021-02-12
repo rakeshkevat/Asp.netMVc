@@ -21,7 +21,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-left">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    @if (Convert.ToInt32(Session["RoleId"]) == 3)
+                    @if (Convert.ToInt32(Session["RoleId"]) == 1004)
                     {
                         <li>@Html.ActionLink("Employees", "Index", "Employees")</li>
                         <li>@Html.ActionLink("Roles", "Index", "Roles")</li>
@@ -30,7 +30,7 @@
                         <li>@Html.ActionLink("Pages", "Index", "Page")</li>
 
                     }
-                    @if (Convert.ToInt32(Session["RoleId"]) == 2)
+                    @if (Convert.ToInt32(Session["RoleId"]) == 1006)
                     {
                         <li>@Html.ActionLink("Employees", "Index", "Employees")</li>
 

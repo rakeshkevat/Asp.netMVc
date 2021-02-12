@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Management.Customfilter;
 using MyApp.Db;
 using MyApp.Model;
 
@@ -11,27 +12,31 @@ namespace Management.Controllers
 {
     public class RolesController : Controller
     {
-        private  EmpManagementEntities db = new EmpManagementEntities();
+        private EmpManagementEntities db = new EmpManagementEntities();
         // GET: Roles
+        [CustomAuthenticationFilter("Admin", "staff")]
+
         public ActionResult Index()
         {
-            List<Role> role = db.Roles.ToList();
+            List<Role> role = db.Roles.Where(y => y.IsActive == true).ToList();
             List<RoleViewModel> roleViewModels = new List<RoleViewModel>();
             foreach (var item in role)
             {
-                roleViewModels.Add( new RoleViewModel()
-                                    {
-                                        RoleID = item.RoleID,
-                                        RoleName = item.RoleName,
-                                        RoleDescruption = item.RoleDescruption,
-                                        IsActive = item.IsActive,
-                                    }
+                roleViewModels.Add(new RoleViewModel()
+                {
+                    RoleID = item.RoleID,
+                    RoleName = item.RoleName,
+                    RoleDescruption = item.RoleDescruption,
+                    IsActive = item.IsActive,
+                }
                 );
             }
 
             return View(roleViewModels);
             //return View(db.Roles.ToList());
         }
+        [CustomAuthenticationFilter("Admin")]
+
         public ActionResult Create()
         {
             return View();
@@ -48,6 +53,8 @@ namespace Management.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+        [CustomAuthenticationFilter("Admin")]
+
         public ActionResult Edit(int? id)
         {
             Role role = db.Roles.Find(id);
@@ -70,12 +77,15 @@ namespace Management.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-        public ActionResult Delete(int? id )
+        [CustomAuthenticationFilter("Admin")]
+
+        public ActionResult Delete(int? id)
         {
             Role role = db.Roles.Find(id);
-            db.Roles.Remove(role);
+            role.IsActive = false;   // only deactive the account not for delete
+            //db.Roles.Remove(role);
             db.SaveChanges();
             return RedirectToAction("Index");
-        } 
+        }
     }
 }

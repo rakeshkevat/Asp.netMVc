@@ -12,14 +12,15 @@ namespace Management.Controllers
 {
     public class EmployeesController : Controller
     {
-        // GET: Employees
 
+        // GET: Employees
         private EmpManagementEntities db = new EmpManagementEntities();
 
-        [CustomAuthenticationFilter("Admin")]
+        [CustomAuthenticationFilter("Admin", "staff")]
         public ActionResult Index()
         {
-            List<Employee> employees = db.Employees.ToList();
+            /****** EmployeeDb lists "obj1" to assign a value in EmployeeView  "obj1" List ******/
+            List<Employee> employees = db.Employees.Where(x => x.IsActive == true).ToList();
             List<EmployeeViewModel> employeeViewModels = new List<EmployeeViewModel>();
             foreach (var item in employees)
             {
@@ -30,11 +31,13 @@ namespace Management.Controllers
                     EmpEmail = item.EmpEmail,
                     EmpContact = item.EmpContact,
                     IsActive = item.IsActive
+
                 });
             }
             return View(employeeViewModels);
             //return View(db.Employees.Take(3).ToList());
         }
+        [CustomAuthenticationFilter("Admin")]
         public ActionResult Create()
         {
             return View();
@@ -55,19 +58,21 @@ namespace Management.Controllers
                 employee.Password = employeeViewModel.Password;
                 db.Employees.Add(employee);
                 db.SaveChanges();
+
+                ///****** db.EmpRoles.Add() :: Add the custom role directly to the roleID ******/
                 db.EmpRoles.Add(new EmpRole
                 {
                     EmpID = employee.EmpID,
-                    RoleID = 3,
+                    RoleID = 4,
                     IsActive = true,
                     CreatedDate = DateTime.Now
                 });
                 db.SaveChanges();
                 return RedirectToAction("Index");
-
             }
             return View(employeeViewModel);
         }
+        [CustomAuthenticationFilter("Admin")]
         public ActionResult Details(int id)
         {
             Employee employee = db.Employees.Find(id);
@@ -79,10 +84,10 @@ namespace Management.Controllers
             employeeViewModel.IsActive = employee.IsActive;
             return View(employeeViewModel);
         }
-
+        [CustomAuthenticationFilter("Admin")]
         public ActionResult Edit(int id)
         {
-
+            /****** dbmodel to viewmodel assing ******/
             Employee employee = db.Employees.Find(id);
             EmployeeViewModel employeeViewModel = new EmployeeViewModel();
             employeeViewModel.EmpID = employee.EmpID;
@@ -93,11 +98,14 @@ namespace Management.Controllers
             employeeViewModel.CreatedDate = employee.CreatedDate;
             employeeViewModel.Password = employee.Password;
             return View(employeeViewModel);
-
         }
         [HttpPost]
         public ActionResult Edit(EmployeeViewModel employeeViewModel)
         {
+            /****** ModelState.Remove("Password") :: its used for bypass the pre value without edit view data ******/
+            ModelState.Remove("Password");
+            ModelState.Remove("ConfirmPassword");
+
             if (ModelState.IsValid)
             {
                 Employee employee = db.Employees.Find(employeeViewModel.EmpID);
@@ -105,22 +113,24 @@ namespace Management.Controllers
                 employee.EmpContact = employeeViewModel.EmpContact;
                 employee.EmpEmail = employeeViewModel.EmpEmail;
                 employee.IsActive = employeeViewModel.IsActive;
-                employee.Password = employeeViewModel.Password;
+                //employee.Password = employeeViewModel.Password;
                 employee.UpdateDate = DateTime.Now;
                 db.Entry(employee).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(employeeViewModel);
-
         }
-
+        [CustomAuthenticationFilter("Admin")]
         public ActionResult Delete(int id)
         {
             Employee employee = db.Employees.Find(id);
-            db.Employees.Remove(employee);
+            employee.IsActive = false;
+            //db.Employees.Remove(employee);
+            db.Entry(employee).State = EntityState.Modified;
             db.SaveChanges();
             return RedirectToAction("Index");
+             
         }
     }
 }
